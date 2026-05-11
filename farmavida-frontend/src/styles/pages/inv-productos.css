@@ -1,0 +1,123 @@
+/* inv-productos.css - Estilos para gestión de productos */
+.prod-container {
+  animation: fadeIn 0.5s ease;
+}
+
+.prod-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fv-space-6);
+}
+
+.prod-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--fv-gray-800);
+}
+
+.prod-refresh-btn {
+  background-color: var(--fv-gray-100);
+  color: var(--fv-gray-700);
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border-radius: var(--fv-radius-md);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.prod-refresh-btn:hover {
+  background-color: var(--fv-gray-200);
+}
+
+.prod-search-box {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  padding: var(--fv-space-4);
+  margin-bottom: var(--fv-space-6);
+  box-shadow: var(--fv-shadow-sm);
+  border: 1px solid var(--fv-gray-200);
+}
+
+.prod-search-input {
+  width: 100%;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border: 1px solid var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+  font-size: 0.875rem;
+  transition: var(--fv-transition);
+}
+
+.prod-search-input:focus {
+  outline: none;
+  border-color: var(--fv-primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.prod-table-container {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  box-shadow: var(--fv-shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--fv-gray-200);
+}
+
+.prod-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prod-table thead {
+  background-color: var(--fv-gray-50);
+}
+
+.prod-table th {
+  padding: var(--fv-space-3) var(--fv-space-6);
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-200);
+}
+
+.prod-table td {
+  padding: var(--fv-space-4) var(--fv-space-6);
+  font-size: 0.875rem;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-100);
+}
+
+.prod-table tbody tr:hover {
+  background-color: var(--fv-gray-50);
+}
+
+.prod-badge-receta {
+  display: inline-block;
+  padding: var(--fv-space-1) var(--fv-space-2);
+  border-radius: var(--fv-radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.prod-badge--normal {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.prod-empty {
+  text-align: center;
+  color: var(--fv-gray-400);
+  padding: var(--fv-space-8);
+}
+
+.prod-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+}

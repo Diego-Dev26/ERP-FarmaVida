@@ -1,0 +1,209 @@
+/* sal-nueva-venta.css - Estilos para nueva venta */
+.venta-container {
+  animation: fadeIn 0.5s ease;
+}
+
+.venta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fv-space-6);
+}
+
+.venta-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--fv-gray-800);
+}
+
+.venta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--fv-space-6);
+}
+
+@media (max-width: 1024px) {
+  .venta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.venta-card {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  box-shadow: var(--fv-shadow-sm);
+  overflow: hidden;
+}
+
+.venta-card-header {
+  padding: var(--fv-space-4) var(--fv-space-6);
+  border-bottom: 1px solid var(--fv-gray-200);
+  background-color: var(--fv-gray-50);
+}
+
+.venta-card-header h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--fv-gray-800);
+}
+
+.venta-card-body {
+  padding: var(--fv-space-6);
+}
+
+.venta-search-box {
+  display: flex;
+  gap: var(--fv-space-2);
+  margin-bottom: var(--fv-space-4);
+}
+
+.venta-search-input {
+  flex: 1;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border: 1px solid var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+  font-size: 0.875rem;
+  outline: none;
+  transition: var(--fv-transition);
+}
+
+.venta-search-input:focus {
+  border-color: var(--fv-primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.venta-search-btn {
+  padding: var(--fv-space-2) var(--fv-space-4);
+  background-color: var(--fv-primary);
+  color: white;
+  border: none;
+  border-radius: var(--fv-radius-md);
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.venta-search-btn:hover {
+  background-color: var(--fv-primary-dark);
+}
+
+.venta-product-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.venta-product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--fv-space-3);
+  border-bottom: 1px solid var(--fv-gray-100);
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.venta-product-item:hover {
+  background-color: var(--fv-gray-50);
+}
+
+.venta-product-info h4 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fv-gray-800);
+}
+
+.venta-product-info p {
+  font-size: 0.75rem;
+  color: var(--fv-gray-500);
+}
+
+.venta-product-price {
+  font-weight: 600;
+  color: var(--fv-primary);
+}
+
+.venta-table-container {
+  overflow-x: auto;
+}
+
+.venta-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.venta-table th {
+  text-align: left;
+  padding: var(--fv-space-2) var(--fv-space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-200);
+}
+
+.venta-table td {
+  padding: var(--fv-space-2) var(--fv-space-3);
+  font-size: 0.875rem;
+  color: var(--fv-gray-600);
+  border-bottom: 1px solid var(--fv-gray-100);
+}
+
+.venta-total {
+  margin-top: var(--fv-space-4);
+  padding-top: var(--fv-space-4);
+  border-top: 2px solid var(--fv-gray-200);
+  text-align: right;
+}
+
+.venta-total p {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--fv-gray-800);
+}
+
+.venta-total span {
+  color: var(--fv-primary);
+  font-size: 1.5rem;
+}
+
+.venta-actions {
+  display: flex;
+  gap: var(--fv-space-3);
+  margin-top: var(--fv-space-6);
+}
+
+.venta-btn-primary {
+  flex: 1;
+  padding: var(--fv-space-3);
+  background-color: var(--fv-primary);
+  color: white;
+  border: none;
+  border-radius: var(--fv-radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.venta-btn-primary:hover {
+  background-color: var(--fv-primary-dark);
+}
+
+.venta-btn-secondary {
+  flex: 1;
+  padding: var(--fv-space-3);
+  background-color: var(--fv-gray-100);
+  color: var(--fv-gray-700);
+  border: none;
+  border-radius: var(--fv-radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.venta-btn-secondary:hover {
+  background-color: var(--fv-gray-200);
+}
+
+.venta-empty {
+  text-align: center;
+  color: var(--fv-gray-400);
+  padding: var(--fv-space-8);
+}

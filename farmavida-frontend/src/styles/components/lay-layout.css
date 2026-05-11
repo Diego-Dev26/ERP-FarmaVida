@@ -1,0 +1,31 @@
+.lay-container {
+  display: flex;
+  height: 100vh;
+  background-color: var(--fv-gray-50);
+}
+
+.lay-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lay-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--fv-space-6);
+}
+
+.lay-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lay-content::-webkit-scrollbar-track {
+  background: var(--fv-gray-100);
+}
+
+.lay-content::-webkit-scrollbar-thumb {
+  background: var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+}

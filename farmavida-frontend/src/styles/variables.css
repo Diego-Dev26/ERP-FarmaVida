@@ -1,0 +1,32 @@
+:root {
+  --fv-primary: #059669;
+  --fv-primary-dark: #047857;
+  --fv-primary-light: #10b981;
+  --fv-secondary: #f59e0b;
+  --fv-success: #10b981;
+  --fv-warning: #f59e0b;
+  --fv-danger: #ef4444;
+  --fv-info: #3b82f6;
+  --fv-gray-50: #f9fafb;
+  --fv-gray-100: #f3f4f6;
+  --fv-gray-200: #e5e7eb;
+  --fv-gray-300: #d1d5db;
+  --fv-gray-400: #9ca3af;
+  --fv-gray-500: #6b7280;
+  --fv-gray-600: #4b5563;
+  --fv-gray-700: #374151;
+  --fv-gray-800: #1f2937;
+  --fv-gray-900: #111827;
+  --fv-space-1: 0.25rem;
+  --fv-space-2: 0.5rem;
+  --fv-space-3: 0.75rem;
+  --fv-space-4: 1rem;
+  --fv-space-6: 1.5rem;
+  --fv-space-8: 2rem;
+  --fv-radius-sm: 0.25rem;
+  --fv-radius-md: 0.5rem;
+  --fv-radius-lg: 0.75rem;
+  --fv-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --fv-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --fv-transition: all 0.3s ease;
+}

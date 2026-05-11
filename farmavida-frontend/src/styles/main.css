@@ -1,0 +1,70 @@
+@import './variables.css';
+@import './utils/animations.css';
+
+/* Reset y estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--fv-gray-50);
+  color: var(--fv-gray-900);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--fv-gray-100);
+  border-radius: var(--fv-radius-md);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fv-gray-400);
+  border-radius: var(--fv-radius-md);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fv-gray-500);
+}
+
+/* Selección de texto */
+::selection {
+  background-color: var(--fv-primary);
+  color: white;
+}
+/* Loading screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--fv-primary);
+  z-index: 9999;
+}
+
+.loading-screen::after {
+  content: '';
+  width: 2rem;
+  height: 2rem;
+  margin-left: var(--fv-space-2);
+  border: 2px solid var(--fv-gray-200);
+  border-top-color: var(--fv-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}

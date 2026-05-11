@@ -1,0 +1,186 @@
+/* inv-lotes.css - Estilos para gestión de lotes */
+.inv-container {
+  animation: fadeIn 0.5s ease;
+}
+
+.inv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fv-space-6);
+}
+
+.inv-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--fv-gray-800);
+}
+
+.inv-btn-primary {
+  background-color: var(--fv-primary);
+  color: white;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border-radius: var(--fv-radius-md);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--fv-transition);
+}
+
+.inv-btn-primary:hover {
+  background-color: var(--fv-primary-dark);
+}
+
+.inv-search-box {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  padding: var(--fv-space-4);
+  margin-bottom: var(--fv-space-6);
+  box-shadow: var(--fv-shadow-sm);
+  border: 1px solid var(--fv-gray-200);
+}
+
+.inv-search-input {
+  width: 100%;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border: 1px solid var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+  font-size: 0.875rem;
+  transition: var(--fv-transition);
+}
+
+.inv-search-input:focus {
+  outline: none;
+  border-color: var(--fv-primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.inv-table-container {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  box-shadow: var(--fv-shadow-sm);
+  overflow-x: auto;
+  border: 1px solid var(--fv-gray-200);
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.inv-table thead {
+  background-color: var(--fv-gray-50);
+}
+
+.inv-table th {
+  padding: var(--fv-space-3) var(--fv-space-4);
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-200);
+}
+
+.inv-table td {
+  padding: var(--fv-space-4) var(--fv-space-4);
+  font-size: 0.875rem;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-100);
+}
+
+.inv-table tbody tr:hover {
+  background-color: var(--fv-gray-50);
+}
+
+.inv-badge {
+  display: inline-block;
+  padding: var(--fv-space-1) var(--fv-space-2);
+  border-radius: var(--fv-radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.inv-badge--activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.inv-badge--proximo {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.inv-badge--vencido {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.inv-badge--agotado {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.inv-product-name {
+  font-weight: 500;
+  color: var(--fv-gray-800);
+}
+
+.inv-product-code {
+  font-size: 0.7rem;
+  color: var(--fv-gray-400);
+}
+
+.inv-stock {
+  font-weight: 600;
+  color: var(--fv-primary);
+}
+
+.inv-stock--low {
+  color: var(--fv-warning);
+}
+
+.inv-stock--out {
+  color: var(--fv-danger);
+}
+
+.inv-btn-edit {
+  color: var(--fv-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: var(--fv-space-3);
+  font-size: 0.875rem;
+}
+
+.inv-btn-edit:hover {
+  color: var(--fv-primary-dark);
+}
+
+.inv-btn-movements {
+  color: var(--fv-info);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.inv-btn-movements:hover {
+  color: #1e40af;
+}
+
+.inv-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--fv-gray-500);
+}
+
+.inv-empty {
+  text-align: center;
+  color: var(--fv-gray-400);
+  padding: var(--fv-space-8);
+}

@@ -1,0 +1,79 @@
+.nav-container {
+  background-color: white;
+  border-bottom: 1px solid var(--fv-gray-200);
+  padding: var(--fv-space-4) var(--fv-space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--fv-shadow-sm);
+}
+
+.nav-info h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--fv-gray-800);
+}
+
+.nav-info p {
+  font-size: 0.875rem;
+  color: var(--fv-gray-500);
+  margin-top: var(--fv-space-1);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--fv-space-4);
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: var(--fv-space-3);
+  padding: var(--fv-space-2) var(--fv-space-3);
+  border-radius: var(--fv-radius-md);
+  transition: var(--fv-transition);
+}
+
+.nav-user:hover {
+  background-color: var(--fv-gray-100);
+}
+
+.nav-user-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--fv-gray-400);
+}
+
+.nav-user-info {
+  text-align: right;
+}
+
+.nav-user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fv-gray-700);
+}
+
+.nav-user-role {
+  font-size: 0.75rem;
+  color: var(--fv-gray-500);
+}
+
+.nav-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--fv-space-2);
+  padding: var(--fv-space-2) var(--fv-space-3);
+  border-radius: var(--fv-radius-md);
+  color: var(--fv-danger);
+  transition: var(--fv-transition);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+}
+
+.nav-logout-btn:hover {
+  background-color: #fee2e2;
+}

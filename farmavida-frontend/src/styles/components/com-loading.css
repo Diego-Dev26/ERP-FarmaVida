@@ -1,0 +1,52 @@
+/* com-loading.css - Estilos para componente de carga */
+.com-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--fv-space-4);
+}
+
+.com-loading-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.com-loading-spinner {
+  border: 3px solid var(--fv-gray-200);
+  border-top-color: var(--fv-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.com-loading-spinner--sm {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-width: 2px;
+}
+
+.com-loading-spinner--md {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+}
+
+.com-loading-spinner--lg {
+  width: 3rem;
+  height: 3rem;
+  border-width: 4px;
+}
+
+.com-loading-text {
+  margin-top: var(--fv-space-3);
+  color: var(--fv-gray-600);
+  font-size: 0.875rem;
+}
