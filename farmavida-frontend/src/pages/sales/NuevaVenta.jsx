@@ -99,16 +99,19 @@ const NuevaVenta = () => {
     
     try {
       const ventaData = {
-        cliente_id: clienteId || null,
-        sucursal_id: sucursalId,
+        sucursal_id: parseInt(sucursalId),
         productos: carrito.map(item => ({
-          producto_id: item.id,
-          cantidad: item.cantidad,
-          precio_unitario: item.precio_venta
+          producto_id: parseInt(item.id),
+          cantidad: parseInt(item.cantidad),
+          precio_unitario: parseFloat(item.precio_venta)
         })),
-        total: calcularTotal(),
-        metodo_pago_id: metodoPagoId
+        total: parseFloat(calcularTotal()),
+        metodo_pago_id: metodoPagoId ? parseInt(metodoPagoId) : null
       };
+
+      if (clienteId) {
+        ventaData.cliente_id = parseInt(clienteId);
+      }
       
       const response = await api.post('/sales', ventaData);
       toast.success(`Venta registrada exitosamente. Código: ${response.data.codigo}`);

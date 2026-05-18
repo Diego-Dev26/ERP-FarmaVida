@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CubeIcon, ShoppingCartIcon, ExclamationTriangleIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import api from '../api/axios';
 import '../styles/pages/pag-dashboard.css';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ 
     totalProductos: 0, 
     ventasHoy: 0, 
@@ -46,10 +48,10 @@ const Dashboard = () => {
   };
 
   const statCards = [
-    { title: 'Productos en Stock', value: stats.totalProductos, icon: CubeIcon, iconColor: 'blue' },
-    { title: 'Ventas Hoy', value: stats.ventasHoy, icon: ShoppingCartIcon, iconColor: 'green' },
-    { title: 'Alertas Vencimiento', value: stats.alertasVencimiento, icon: ExclamationTriangleIcon, iconColor: 'red' },
-    { title: 'Ingresos Hoy', value: `Bs ${stats.ingresosHoy?.toLocaleString() || 0}`, icon: CurrencyDollarIcon, iconColor: 'yellow' }
+    { title: 'Productos en Stock', value: stats.totalProductos, icon: CubeIcon, iconColor: 'blue', path: '/productos' },
+    { title: 'Ventas Hoy', value: stats.ventasHoy, icon: ShoppingCartIcon, iconColor: 'green', path: '/sales' },
+    { title: 'Alertas Vencimiento', value: stats.alertasVencimiento, icon: ExclamationTriangleIcon, iconColor: 'red', path: '/reports' },
+    { title: 'Ingresos Hoy', value: `Bs ${stats.ingresosHoy?.toLocaleString() || 0}`, icon: CurrencyDollarIcon, iconColor: 'yellow', path: '/reports' }
   ];
 
   if (loading) {
@@ -66,7 +68,13 @@ const Dashboard = () => {
       
       <div className="dash-stats-grid">
         {statCards.map((stat, index) => (
-          <div key={index} className="dash-stat-card">
+          <div 
+            key={index} 
+            className="dash-stat-card" 
+            onClick={() => navigate(stat.path)}
+            style={{ cursor: 'pointer', transition: 'transform 0.2s', ...({':hover': {transform: 'scale(1.02)'}}) }}
+            title={`Ver detalles de ${stat.title}`}
+          >
             <div className="dash-stat-content">
               <div className="dash-stat-info">
                 <p>{stat.title}</p>
