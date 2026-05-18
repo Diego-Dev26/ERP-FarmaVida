@@ -10,11 +10,14 @@ import Lotes from './pages/inventory/Lotes';
 import AlertasVencimiento from './pages/inventory/AlertasVencimiento';
 import Transferencias from './pages/inventory/Transferencias';
 import Movimientos from './pages/inventory/Movimientos';
+import Proveedores from './pages/inventory/Proveedores';
+import Compras from './pages/inventory/Compras';
 import Pedidos from './pages/sales/Pedidos';
 import Recetas from './pages/sales/Recetas';
 import Clientes from './pages/sales/Clientes';
 import NuevaVenta from './pages/sales/NuevaVenta';
 import Reportes from './pages/reports/Reportes';
+import Empleados from './pages/core/Empleados';
 
 // Componente que usa useAuth - DEBE estar dentro de AuthProvider
 const PrivateRoute = ({ children }) => {
@@ -49,12 +52,17 @@ const AppRoutes = () => {
           <Route path="alertas" element={<AlertasVencimiento />} />
           <Route path="transferencias" element={<Transferencias />} />
           <Route path="movimientos" element={<Movimientos />} />
+          <Route path="proveedores" element={<Proveedores />} />
+          <Route path="compras" element={<Compras />} />
         </Route>
         <Route path="sales">
           <Route index element={<Pedidos />} />
           <Route path="nueva" element={<NuevaVenta />} />
           <Route path="recetas" element={<Recetas />} />
           <Route path="clientes" element={<Clientes />} />
+        </Route>
+        <Route path="core">
+          <Route path="empleados" element={<Empleados />} />
         </Route>
         <Route path="reports" element={<Reportes />} />
       </Route>

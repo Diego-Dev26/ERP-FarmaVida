@@ -5,50 +5,38 @@ import '../../styles/pages/sal-nueva-venta.css';
 
 const NuevaVenta = () => {
   const [productos, setProductos] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [sucursales, setSucursales] = useState([]);
   const [sucursalId, setSucursalId] = useState('');
-  const [loading, setLoading] = useState(false);
   const [metodosPago, setMetodosPago] = useState([]);
   const [metodoPagoId, setMetodoPagoId] = useState('');
+  const [clienteId, setClienteId] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchProductos();
-    fetchSucursales();
-    fetchMetodosPago();
+    fetchInitialData();
   }, []);
 
-  const fetchProductos = async () => {
+  const fetchInitialData = async () => {
     try {
-      const response = await api.get('/productos');
-      setProductos(response.data);
+      const [prodRes, cliRes, sucRes, metRes] = await Promise.all([
+        api.get('/productos'),
+        api.get('/clientes'),
+        api.get('/sucursales'),
+        api.get('/metodos-pago')
+      ]);
+      setProductos(prodRes.data);
+      setClientes(cliRes.data);
+      setSucursales(sucRes.data);
+      setMetodosPago(metRes.data);
+      
+      if (sucRes.data.length > 0) setSucursalId(sucRes.data[0].id);
+      if (metRes.data.length > 0) setMetodoPagoId(metRes.data[0].id);
     } catch (error) {
-      console.error('Error fetching productos:', error);
-    }
-  };
-
-  const fetchSucursales = async () => {
-    try {
-      const response = await api.get('/sucursales');
-      setSucursales(response.data);
-      if (response.data.length > 0) {
-        setSucursalId(response.data[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching sucursales:', error);
-    }
-  };
-
-  const fetchMetodosPago = async () => {
-    try {
-      const response = await api.get('/metodos-pago');
-      setMetodosPago(response.data);
-      if (response.data.length > 0) {
-        setMetodoPagoId(response.data[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching metodos pago:', error);
+      console.error('Error fetching data:', error);
+      toast.error('Error al cargar datos del sistema');
     }
   };
 
@@ -102,11 +90,16 @@ const NuevaVenta = () => {
       toast.error('Seleccione una sucursal');
       return;
     }
+
+    if (!clienteId) {
+      if (!window.confirm('¿Registrar venta a nombre de Consumidor Final?')) return;
+    }
     
     setLoading(true);
     
     try {
       const ventaData = {
+        cliente_id: clienteId || null,
         sucursal_id: sucursalId,
         productos: carrito.map(item => ({
           producto_id: item.id,
@@ -121,6 +114,7 @@ const NuevaVenta = () => {
       toast.success(`Venta registrada exitosamente. Código: ${response.data.codigo}`);
       setCarrito([]);
       setBusqueda('');
+      setClienteId('');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al registrar venta');
     } finally {
@@ -131,14 +125,14 @@ const NuevaVenta = () => {
   return (
     <div className="venta-container">
       <div className="venta-header">
-        <h1 className="venta-title">Nueva Venta</h1>
+        <h1 className="venta-title">Punto de Venta (POS)</h1>
       </div>
 
       <div className="venta-grid">
         {/* Panel izquierdo - Productos */}
         <div className="venta-card">
           <div className="venta-card-header">
-            <h2>Productos</h2>
+            <h2>Catálogo de Productos</h2>
           </div>
           <div className="venta-card-body">
             <div className="venta-search-box">
@@ -151,14 +145,14 @@ const NuevaVenta = () => {
               />
             </div>
             <div className="venta-product-list">
-              {productosFiltrados.slice(0, 20).map((producto) => (
+              {productosFiltrados.slice(0, 30).map((producto) => (
                 <div
                   key={producto.id}
                   className="venta-product-item"
                   onClick={() => agregarAlCarrito(producto)}
                 >
                   <div className="venta-product-info">
-                    <h4>{producto.nombre}</h4>
+                    <h4>{producto.nombre} {producto.requiere_receta && <span style={{color:'red', fontSize:'10px', marginLeft:'4px'}}>(RECETA)</span>}</h4>
                     <p>Código: {producto.codigo_interno}</p>
                   </div>
                   <div className="venta-product-price">
@@ -167,7 +161,7 @@ const NuevaVenta = () => {
                 </div>
               ))}
               {productosFiltrados.length === 0 && (
-                <div className="venta-empty">No hay productos</div>
+                <div className="venta-empty">No se encontraron productos</div>
               )}
             </div>
           </div>
@@ -176,15 +170,33 @@ const NuevaVenta = () => {
         {/* Panel derecho - Carrito */}
         <div className="venta-card">
           <div className="venta-card-header">
-            <h2>Carrito de Venta</h2>
+            <h2>Detalle de Venta</h2>
           </div>
           <div className="venta-card-body">
-            <div className="venta-table-container">
+            
+            <div style={{ marginBottom: '16px', display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label className="venta-label" style={{display:'block', marginBottom:'4px', fontSize:'0.875rem', fontWeight:'500', color:'var(--fv-gray-700)'}}>Cliente</label>
+                <select
+                  value={clienteId}
+                  onChange={(e) => setClienteId(e.target.value)}
+                  className="venta-search-input"
+                  style={{ width: '100%', padding: '8px', border: '1px solid var(--fv-gray-300)', borderRadius: 'var(--fv-radius-md)' }}
+                >
+                  <option value="">Consumidor Final (S/N)</option>
+                  {clientes.map(c => (
+                    <option key={c.id} value={c.id}>{c.documento} - {c.apellidos}, {c.nombres}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="venta-table-container" style={{ minHeight: '200px', maxHeight: '300px', overflowY: 'auto' }}>
               <table className="venta-table">
                 <thead>
                   <tr>
                     <th>Producto</th>
-                    <th>Cantidad</th>
+                    <th>Cant.</th>
                     <th>Precio</th>
                     <th>Subtotal</th>
                     <th></th>
@@ -193,22 +205,22 @@ const NuevaVenta = () => {
                 <tbody>
                   {carrito.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.nombre}</td>
+                      <td style={{fontWeight: '500', color: 'var(--fv-gray-800)'}}>{item.nombre}</td>
                       <td>
                         <input
                           type="number"
                           min="1"
                           value={item.cantidad}
                           onChange={(e) => actualizarCantidad(item.id, parseInt(e.target.value))}
-                          style={{ width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }}
+                          style={{ width: '50px', padding: '4px', borderRadius: '4px', border: '1px solid var(--fv-gray-300)', textAlign: 'center' }}
                         />
                       </td>
                       <td>Bs {item.precio_venta}</td>
-                      <td>Bs {(item.precio_venta * item.cantidad).toFixed(2)}</td>
+                      <td style={{fontWeight: '600'}}>Bs {(item.precio_venta * item.cantidad).toFixed(2)}</td>
                       <td>
                         <button
                           onClick={() => eliminarDelCarrito(item.id)}
-                          style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
+                          style={{ color: 'var(--fv-danger)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', padding: '4px' }}
                         >
                           ✕
                         </button>
@@ -217,42 +229,42 @@ const NuevaVenta = () => {
                   ))}
                 </tbody>
               </table>
+              {carrito.length === 0 && (
+                <div className="venta-empty" style={{padding: '32px 0'}}>Agregue productos al carrito</div>
+              )}
             </div>
-            
-            {carrito.length === 0 && (
-              <div className="venta-empty">No hay productos en el carrito</div>
-            )}
             
             <div className="venta-total">
-              <p>Total: <span>Bs {calcularTotal().toFixed(2)}</span></p>
+              <p>Total a Pagar: <span>Bs {calcularTotal().toFixed(2)}</span></p>
             </div>
             
-            <div style={{ marginTop: '16px' }}>
-              <label className="venta-label">Sucursal</label>
-              <select
-                value={sucursalId}
-                onChange={(e) => setSucursalId(e.target.value)}
-                className="venta-search-input"
-                style={{ marginTop: '8px' }}
-              >
-                {sucursales.map(s => (
-                  <option key={s.id} value={s.id}>{s.nombre}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div style={{ marginTop: '16px' }}>
-              <label className="venta-label">Método de Pago</label>
-              <select
-                value={metodoPagoId}
-                onChange={(e) => setMetodoPagoId(e.target.value)}
-                className="venta-search-input"
-                style={{ marginTop: '8px' }}
-              >
-                {metodosPago.map(m => (
-                  <option key={m.id} value={m.id}>{m.nombre}</option>
-                ))}
-              </select>
+            <div style={{ marginTop: '16px', display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label className="venta-label" style={{display:'block', marginBottom:'4px', fontSize:'0.875rem', fontWeight:'500', color:'var(--fv-gray-700)'}}>Sucursal</label>
+                <select
+                  value={sucursalId}
+                  onChange={(e) => setSucursalId(e.target.value)}
+                  className="venta-search-input"
+                  style={{ width: '100%', padding: '8px', border: '1px solid var(--fv-gray-300)', borderRadius: 'var(--fv-radius-md)' }}
+                >
+                  {sucursales.map(s => (
+                    <option key={s.id} value={s.id}>{s.nombre}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="venta-label" style={{display:'block', marginBottom:'4px', fontSize:'0.875rem', fontWeight:'500', color:'var(--fv-gray-700)'}}>Método de Pago</label>
+                <select
+                  value={metodoPagoId}
+                  onChange={(e) => setMetodoPagoId(e.target.value)}
+                  className="venta-search-input"
+                  style={{ width: '100%', padding: '8px', border: '1px solid var(--fv-gray-300)', borderRadius: 'var(--fv-radius-md)' }}
+                >
+                  {metodosPago.map(m => (
+                    <option key={m.id} value={m.id}>{m.nombre}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             
             <div className="venta-actions">
@@ -260,6 +272,7 @@ const NuevaVenta = () => {
                 type="button"
                 onClick={() => setCarrito([])}
                 className="venta-btn-secondary"
+                disabled={carrito.length === 0}
               >
                 Vaciar Carrito
               </button>
@@ -269,7 +282,7 @@ const NuevaVenta = () => {
                 disabled={loading || carrito.length === 0}
                 className="venta-btn-primary"
               >
-                {loading ? 'Procesando...' : 'Confirmar Venta'}
+                {loading ? 'Procesando...' : 'Confirmar y Cobrar'}
               </button>
             </div>
           </div>

@@ -1,0 +1,230 @@
+/* core-empleados.css - Estilos para gestión de empleados/usuarios */
+.emp-container {
+  animation: fadeIn 0.5s ease;
+}
+
+.emp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fv-space-6);
+}
+
+.emp-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--fv-gray-800);
+}
+
+.emp-refresh-btn, .emp-add-btn {
+  background-color: var(--fv-primary);
+  color: white;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border-radius: var(--fv-radius-md);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--fv-transition);
+  margin-left: var(--fv-space-2);
+}
+
+.emp-refresh-btn:hover, .emp-add-btn:hover {
+  background-color: var(--fv-primary-dark);
+}
+
+.emp-search-box {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  padding: var(--fv-space-4);
+  margin-bottom: var(--fv-space-6);
+  box-shadow: var(--fv-shadow-sm);
+  border: 1px solid var(--fv-gray-200);
+}
+
+.emp-search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border: 1px solid var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+  font-size: 0.875rem;
+  transition: var(--fv-transition);
+}
+
+.emp-search-input:focus {
+  outline: none;
+  border-color: var(--fv-primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.emp-table-container {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  box-shadow: var(--fv-shadow-sm);
+  overflow-x: auto;
+  border: 1px solid var(--fv-gray-200);
+}
+
+.emp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.emp-table thead {
+  background-color: var(--fv-gray-50);
+}
+
+.emp-table th {
+  padding: var(--fv-space-3) var(--fv-space-6);
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fv-gray-500);
+  border-bottom: 1px solid var(--fv-gray-200);
+}
+
+.emp-table td {
+  padding: var(--fv-space-4) var(--fv-space-6);
+  font-size: 0.875rem;
+  color: var(--fv-gray-600);
+  border-bottom: 1px solid var(--fv-gray-100);
+}
+
+.emp-table tbody tr:hover {
+  background-color: var(--fv-gray-50);
+}
+
+.emp-badge {
+  display: inline-block;
+  padding: var(--fv-space-1) var(--fv-space-2);
+  border-radius: var(--fv-radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.emp-badge--admin {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.emp-badge--farmaceutico {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.emp-badge--cajero {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.emp-badge--almacenero {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.emp-empty {
+  text-align: center;
+  color: var(--fv-gray-400);
+  padding: var(--fv-space-8);
+}
+
+/* Modal Estilos */
+.emp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.emp-modal-content {
+  background-color: white;
+  border-radius: var(--fv-radius-lg);
+  padding: var(--fv-space-6);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.emp-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fv-space-4);
+  border-bottom: 1px solid var(--fv-gray-200);
+  padding-bottom: var(--fv-space-4);
+}
+
+.emp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--fv-space-4);
+}
+
+.emp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fv-space-1);
+}
+
+.emp-form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fv-gray-700);
+}
+
+.emp-form-input {
+  padding: var(--fv-space-2) var(--fv-space-3);
+  border: 1px solid var(--fv-gray-300);
+  border-radius: var(--fv-radius-md);
+  outline: none;
+}
+
+.emp-form-input:focus {
+  border-color: var(--fv-primary);
+}
+
+.emp-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--fv-space-3);
+  margin-top: var(--fv-space-6);
+}
+
+.emp-btn-cancel {
+  background-color: var(--fv-gray-100);
+  color: var(--fv-gray-700);
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border-radius: var(--fv-radius-md);
+  border: none;
+  cursor: pointer;
+}
+
+.emp-btn-save {
+  background-color: var(--fv-primary);
+  color: white;
+  padding: var(--fv-space-2) var(--fv-space-4);
+  border-radius: var(--fv-radius-md);
+  border: none;
+  cursor: pointer;
+}
+
+.emp-action-btn {
+  background: none;
+  border: none;
+  color: var(--fv-info);
+  cursor: pointer;
+  margin-right: 8px;
+}
+.emp-action-btn--delete {
+  color: var(--fv-danger);
+}

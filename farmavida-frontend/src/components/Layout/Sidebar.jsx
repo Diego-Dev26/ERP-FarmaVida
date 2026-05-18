@@ -8,7 +8,10 @@ import {
   DocumentTextIcon,
   UserGroupIcon,
   ChartBarIcon,
-  ClipboardDocumentListIcon
+  ClipboardDocumentListIcon,
+  TruckIcon,
+  InboxArrowDownIcon,
+  IdentificationIcon
 } from '@heroicons/react/24/outline';
 import '../../styles/components/lay-sidebar.css';
 
@@ -20,6 +23,9 @@ const navigation = [
   { name: 'Ventas', to: '/sales/nueva', icon: ShoppingCartIcon },
   { name: 'Recetas', to: '/sales/recetas', icon: DocumentTextIcon },
   { name: 'Clientes', to: '/sales/clientes', icon: UserGroupIcon },
+  { name: 'Proveedores', to: '/inventory/proveedores', icon: TruckIcon },
+  { name: 'Compras', to: '/inventory/compras', icon: InboxArrowDownIcon },
+  { name: 'Usuarios', to: '/core/empleados', icon: IdentificationIcon },
   { name: 'Reportes', to: '/reports', icon: ChartBarIcon },
 ];
 

@@ -1,0 +1,466 @@
+-- ============================================================
+-- SCRIPT SQL COMPLETO - BASE DE DATOS FARMAVIDA (MySQL)
+-- ERP para gestión de farmacias
+-- ============================================================
+
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS farmavida
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE farmavida;
+
+-- ============================================================
+-- 1. TABLA: categorias
+-- ============================================================
+CREATE TABLE IF NOT EXISTS categorias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion TEXT,
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 2. TABLA: unidades_medida
+-- ============================================================
+CREATE TABLE IF NOT EXISTS unidades_medida (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  abreviatura VARCHAR(10) NOT NULL,
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 3. TABLA: productos
+-- ============================================================
+CREATE TABLE IF NOT EXISTS productos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo_barras VARCHAR(50),
+  codigo_interno VARCHAR(20) NOT NULL UNIQUE,
+  nombre VARCHAR(200) NOT NULL,
+  nombre_comercial VARCHAR(200),
+  descripcion TEXT,
+  categoria_id INT,
+  unidad_medida_id INT,
+  requiere_receta TINYINT(1) DEFAULT 0,
+  requiere_refrigeracion TINYINT(1) DEFAULT 0,
+  es_controlado TINYINT(1) DEFAULT 0,
+  precio_compra DECIMAL(10,2) DEFAULT 0.00,
+  precio_venta DECIMAL(10,2) NOT NULL,
+  stock_minimo INT DEFAULT 10,
+  stock_maximo INT DEFAULT 500,
+  imagen_url VARCHAR(500),
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (categoria_id) REFERENCES categorias(id),
+  FOREIGN KEY (unidad_medida_id) REFERENCES unidades_medida(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 4. TABLA: proveedores
+-- ============================================================
+CREATE TABLE IF NOT EXISTS proveedores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  razon_social VARCHAR(200) NOT NULL,
+  nit VARCHAR(20),
+  contacto VARCHAR(100),
+  telefono VARCHAR(20),
+  email VARCHAR(100),
+  direccion TEXT,
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 5. TABLA: lotes
+-- ============================================================
+CREATE TABLE IF NOT EXISTS lotes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  producto_id INT NOT NULL,
+  codigo_lote VARCHAR(50) NOT NULL,
+  fecha_fabricacion DATE,
+  fecha_caducidad DATE NOT NULL,
+  cantidad_inicial INT NOT NULL,
+  cantidad_actual INT NOT NULL DEFAULT 0,
+  precio_compra DECIMAL(10,2),
+  proveedor_id INT,
+  estado ENUM('activo','agotado','vencido','retirado') DEFAULT 'activo',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (producto_id) REFERENCES productos(id),
+  FOREIGN KEY (proveedor_id) REFERENCES proveedores(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 6. TABLA: ubicaciones
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ubicaciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(20) NOT NULL,
+  nombre VARCHAR(100) NOT NULL,
+  tipo ENUM('almacen','estante','refrigerador','mostrador') DEFAULT 'estante',
+  sucursal_id INT,
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 7. TABLA: inventario
+-- ============================================================
+CREATE TABLE IF NOT EXISTS inventario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  lote_id INT NOT NULL,
+  ubicacion_id INT NOT NULL,
+  cantidad INT NOT NULL DEFAULT 0,
+  cantidad_reservada INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (lote_id) REFERENCES lotes(id),
+  FOREIGN KEY (ubicacion_id) REFERENCES ubicaciones(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 8. TABLA: tipos_movimiento
+-- ============================================================
+CREATE TABLE IF NOT EXISTS tipos_movimiento (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  tipo ENUM('entrada','salida') NOT NULL,
+  descripcion VARCHAR(200),
+  estado TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 9. TABLA: empleados
+-- Usa CI (Cédula de Identidad) como campo de identificación
+-- ============================================================
+CREATE TABLE IF NOT EXISTS empleados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ci VARCHAR(20) NOT NULL UNIQUE,
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  usuario VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  rol ENUM('admin','farmaceutico','cajero','almacenero') DEFAULT 'cajero',
+  email VARCHAR(100),
+  telefono VARCHAR(20),
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 10. TABLA: movimientos_inventario
+-- ============================================================
+CREATE TABLE IF NOT EXISTS movimientos_inventario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tipo_movimiento_id INT NOT NULL,
+  lote_id INT NOT NULL,
+  cantidad INT NOT NULL,
+  precio_unitario DECIMAL(10,2),
+  usuario_id INT,
+  observaciones TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (tipo_movimiento_id) REFERENCES tipos_movimiento(id),
+  FOREIGN KEY (lote_id) REFERENCES lotes(id),
+  FOREIGN KEY (usuario_id) REFERENCES empleados(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 11. TABLA: alertas_vencimiento
+-- ============================================================
+CREATE TABLE IF NOT EXISTS alertas_vencimiento (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  lote_id INT NOT NULL,
+  dias_restantes INT,
+  fecha_alerta DATE NOT NULL,
+  tipo_alerta ENUM('30_dias','15_dias','7_dias','vencido') NOT NULL,
+  atendido TINYINT(1) DEFAULT 0,
+  fecha_atencion DATETIME,
+  usuario_atendio INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (lote_id) REFERENCES lotes(id),
+  FOREIGN KEY (usuario_atendio) REFERENCES empleados(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 12. TABLA: sucursales
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sucursales (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(10) NOT NULL UNIQUE,
+  nombre VARCHAR(100) NOT NULL,
+  direccion TEXT,
+  telefono VARCHAR(20),
+  encargado VARCHAR(100),
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 13. TABLA: clientes
+-- Usa CI (Cédula de Identidad) como campo "documento"
+-- ============================================================
+CREATE TABLE IF NOT EXISTS clientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  documento VARCHAR(20) NOT NULL UNIQUE COMMENT 'CI - Cédula de Identidad',
+  tipo_documento ENUM('CI','pasaporte','otro') DEFAULT 'CI',
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  telefono VARCHAR(20),
+  email VARCHAR(100),
+  direccion TEXT,
+  estado TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 14. TABLA: metodos_pago
+-- ============================================================
+CREATE TABLE IF NOT EXISTS metodos_pago (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  codigo VARCHAR(20) NOT NULL,
+  activo TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 15. TABLA: pedidos (ventas)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS pedidos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(50) NOT NULL UNIQUE,
+  cliente_id INT,
+  sucursal_id INT NOT NULL,
+  tipo_pedido ENUM('mostrador','delivery','online') DEFAULT 'mostrador',
+  fecha_pedido DATETIME DEFAULT CURRENT_TIMESTAMP,
+  subtotal DECIMAL(10,2) DEFAULT 0.00,
+  descuento DECIMAL(10,2) DEFAULT 0.00,
+  total DECIMAL(10,2) NOT NULL,
+  estado ENUM('pendiente','pagado','cancelado','devuelto') DEFAULT 'pendiente',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+  FOREIGN KEY (sucursal_id) REFERENCES sucursales(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 16. TABLA: pedido_detalles
+-- ============================================================
+CREATE TABLE IF NOT EXISTS pedido_detalles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  producto_id INT NOT NULL,
+  lote_id INT,
+  cantidad INT NOT NULL,
+  precio_unitario DECIMAL(10,2) NOT NULL,
+  subtotal DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+  FOREIGN KEY (producto_id) REFERENCES productos(id),
+  FOREIGN KEY (lote_id) REFERENCES lotes(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 17. TABLA: pagos
+-- ============================================================
+CREATE TABLE IF NOT EXISTS pagos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  metodo_pago_id INT NOT NULL,
+  monto DECIMAL(10,2) NOT NULL,
+  fecha_pago DATETIME DEFAULT CURRENT_TIMESTAMP,
+  estado ENUM('pendiente','completado','anulado') DEFAULT 'pendiente',
+  referencia VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+  FOREIGN KEY (metodo_pago_id) REFERENCES metodos_pago(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 18. TABLA: recetas
+-- Usa CI para medico_ci
+-- ============================================================
+CREATE TABLE IF NOT EXISTS recetas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  codigo_qr VARCHAR(100) UNIQUE,
+  medico_nombre VARCHAR(150) NOT NULL,
+  medico_ci VARCHAR(20) COMMENT 'CI del médico',
+  medico_especialidad VARCHAR(100),
+  fecha_emision DATE NOT NULL,
+  fecha_validez DATE NOT NULL,
+  diagnostico TEXT,
+  estado ENUM('pendiente','validada','dispensada','rechazada','vencida') DEFAULT 'pendiente',
+  validada_por INT,
+  fecha_validacion DATETIME,
+  observaciones_rechazo TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+  FOREIGN KEY (validada_por) REFERENCES empleados(id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 19. TABLA: receta_detalles
+-- ============================================================
+CREATE TABLE IF NOT EXISTS receta_detalles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  receta_id INT NOT NULL,
+  producto_id INT NOT NULL,
+  cantidad INT NOT NULL DEFAULT 1,
+  indicaciones TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (receta_id) REFERENCES recetas(id),
+  FOREIGN KEY (producto_id) REFERENCES productos(id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- DATOS INICIALES (Catálogos y datos de ejemplo)
+-- ============================================================
+
+-- // Oscar Diego Alegre Inocente
+
+-- Categorías
+INSERT INTO categorias (nombre, descripcion) VALUES
+('Analgésicos', 'Medicamentos para aliviar el dolor'),
+('Antibióticos', 'Medicamentos para combatir infecciones bacterianas'),
+('Antiinflamatorios', 'Medicamentos para reducir inflamación'),
+('Vitaminas y Suplementos', 'Complementos nutricionales'),
+('Antihistamínicos', 'Medicamentos para alergias'),
+('Dermatológicos', 'Productos para la piel'),
+('Gastrointestinales', 'Medicamentos para el sistema digestivo'),
+('Antipiréticos', 'Medicamentos para reducir la fiebre');
+
+-- Unidades de medida
+INSERT INTO unidades_medida (nombre, abreviatura) VALUES
+('Tableta', 'TAB'),
+('Cápsula', 'CAP'),
+('Frasco', 'FRA'),
+('Caja', 'CJA'),
+('Sobre', 'SBR'),
+('Tubo', 'TUB'),
+('Ampolla', 'AMP'),
+('Mililitro', 'ML');
+
+-- Tipos de movimiento
+INSERT INTO tipos_movimiento (id, nombre, tipo, descripcion) VALUES
+(1, 'Compra', 'entrada', 'Ingreso de mercadería por compra a proveedor'),
+(2, 'Devolución Cliente', 'entrada', 'Devolución de producto por parte del cliente'),
+(3, 'Ajuste Positivo', 'entrada', 'Ajuste manual de inventario a favor'),
+(4, 'Venta', 'salida', 'Salida de mercadería por venta'),
+(5, 'Merma', 'salida', 'Pérdida de producto por vencimiento o daño'),
+(6, 'Transferencia Salida', 'salida', 'Transferencia a otra sucursal'),
+(7, 'Transferencia Entrada', 'entrada', 'Recepción de otra sucursal');
+
+-- Métodos de pago
+INSERT INTO metodos_pago (nombre, codigo) VALUES
+('Efectivo', 'CASH'),
+('Tarjeta de Débito', 'DEBIT'),
+('Tarjeta de Crédito', 'CREDIT'),
+('QR / Transferencia', 'QR'),
+('Crédito Interno', 'CREDIT_INT');
+
+-- Sucursales
+INSERT INTO sucursales (codigo, nombre, direccion, telefono, encargado) VALUES
+('SUC-001', 'FarmaVida Central', 'Av. Heroínas #1234, Cochabamba', '4-4251234', 'María López'),
+('SUC-002', 'FarmaVida Norte', 'Av. Blanco Galindo Km 5, Cochabamba', '4-4367890', 'Carlos Pérez'),
+('SUC-003', 'FarmaVida Sur', 'Av. 6 de Agosto #567, Cochabamba', '4-4123456', 'Ana Rodríguez');
+
+-- Ubicaciones
+INSERT INTO ubicaciones (codigo, nombre, tipo, sucursal_id) VALUES
+('ALM-001', 'Almacén Principal', 'almacen', 1),
+('EST-001', 'Estante A - Analgésicos', 'estante', 1),
+('EST-002', 'Estante B - Antibióticos', 'estante', 1),
+('REF-001', 'Refrigerador Central', 'refrigerador', 1),
+('MOS-001', 'Mostrador Principal', 'mostrador', 1);
+
+-- Proveedores
+INSERT INTO proveedores (razon_social, nit, contacto, telefono, email, direccion) VALUES
+('Droguería INTI S.A.', '1023456789', 'Juan Mamani', '2-2345678', 'ventas@inti.com.bo', 'Zona Industrial, La Paz'),
+('Laboratorios VIDA S.R.L.', '1098765432', 'Rosa Quispe', '4-4567890', 'contacto@labvida.com.bo', 'Av. Aroma, Cochabamba'),
+('Distribuidora FARMA Plus', '1056789012', 'Pedro Torrez', '3-3456789', 'info@farmaplus.com.bo', 'C. Comercio #45, Santa Cruz');
+
+-- Empleado administrador
+-- Contraseña: admin123 (encriptada con bcrypt)
+INSERT INTO empleados (ci, nombres, apellidos, usuario, password, rol, email, telefono) VALUES
+('12345678', 'Oscar Diego', 'Alegre Inocente', 'admin', '$2a$10$8K1p/a0dL1LXMIgoEDFrwOfMQkF.Y2pEtQ3JfnZGPqFf0NQ6YvKFi', 'admin', 'admin@farmavida.com', '77712345'),
+('87654321', 'María', 'López Gutiérrez', 'mlopez', '$2a$10$8K1p/a0dL1LXMIgoEDFrwOfMQkF.Y2pEtQ3JfnZGPqFf0NQ6YvKFi', 'farmaceutico', 'mlopez@farmavida.com', '77798765'),
+('11223344', 'Carlos', 'Pérez Rojas', 'cperez', '$2a$10$8K1p/a0dL1LXMIgoEDFrwOfMQkF.Y2pEtQ3JfnZGPqFf0NQ6YvKFi', 'cajero', 'cperez@farmavida.com', '77711223');
+
+-- Productos
+INSERT INTO productos (codigo_interno, nombre, nombre_comercial, descripcion, categoria_id, unidad_medida_id, requiere_receta, precio_compra, precio_venta, stock_minimo) VALUES
+('PROD-001', 'Paracetamol 500mg', 'Paracetamol', 'Analgésico y antipirético', 1, 1, 0, 1.50, 3.00, 50),
+('PROD-002', 'Ibuprofeno 400mg', 'Ibuprofeno', 'Antiinflamatorio no esteroideo', 3, 1, 0, 2.00, 4.50, 40),
+('PROD-003', 'Amoxicilina 500mg', 'Amoxicilina', 'Antibiótico de amplio espectro', 2, 4, 1, 8.00, 15.00, 30),
+('PROD-004', 'Vitamina C 1000mg', 'Cevimax', 'Suplemento vitamínico', 4, 1, 0, 3.50, 7.00, 60),
+('PROD-005', 'Loratadina 10mg', 'Loratadina', 'Antihistamínico', 5, 1, 0, 2.50, 5.00, 35),
+('PROD-006', 'Omeprazol 20mg', 'Omeprazol', 'Protector gástrico', 7, 4, 0, 4.00, 8.50, 45),
+('PROD-007', 'Diclofenaco Gel 1%', 'Diclofenaco', 'Gel antiinflamatorio tópico', 6, 6, 0, 6.00, 12.00, 20),
+('PROD-008', 'Azitromicina 500mg', 'Azitromicina', 'Antibiótico macrólido', 2, 1, 1, 5.00, 10.00, 25),
+('PROD-009', 'Cetirizina 10mg', 'Cetirizina', 'Antihistamínico de segunda generación', 5, 1, 0, 1.80, 4.00, 40),
+('PROD-010', 'Complejo B Inyectable', 'Complejo B', 'Vitaminas del complejo B', 4, 7, 1, 7.00, 14.00, 15);
+
+-- Lotes de ejemplo
+INSERT INTO lotes (producto_id, codigo_lote, fecha_fabricacion, fecha_caducidad, cantidad_inicial, cantidad_actual, precio_compra, proveedor_id) VALUES
+(1, 'LOT-PAR-001', '2025-01-15', '2027-01-15', 200, 180, 1.50, 1),
+(2, 'LOT-IBU-001', '2025-03-01', '2027-03-01', 150, 140, 2.00, 1),
+(3, 'LOT-AMX-001', '2025-02-10', '2026-08-10', 100, 85, 8.00, 2),
+(4, 'LOT-VTC-001', '2025-04-01', '2026-10-01', 300, 250, 3.50, 2),
+(5, 'LOT-LOR-001', '2025-05-15', '2027-05-15', 120, 110, 2.50, 3),
+(6, 'LOT-OME-001', '2025-01-20', '2026-07-20', 180, 160, 4.00, 1),
+(7, 'LOT-DIC-001', '2025-06-01', '2027-06-01', 80, 75, 6.00, 3),
+(8, 'LOT-AZI-001', '2025-03-15', '2026-09-15', 90, 80, 5.00, 2),
+(9, 'LOT-CET-001', '2025-04-10', '2027-04-10', 200, 190, 1.80, 1),
+(10, 'LOT-CMP-001', '2025-02-28', '2026-06-28', 60, 50, 7.00, 3);
+
+-- Inventario inicial
+INSERT INTO inventario (lote_id, ubicacion_id, cantidad, cantidad_reservada) VALUES
+(1, 1, 180, 0),
+(2, 1, 140, 0),
+(3, 2, 85, 0),
+(4, 1, 250, 0),
+(5, 2, 110, 0),
+(6, 1, 160, 0),
+(7, 2, 75, 0),
+(8, 2, 80, 0),
+(9, 1, 190, 0),
+(10, 4, 50, 0);
+
+-- Clientes de ejemplo (usando CI - Cédula de Identidad)
+INSERT INTO clientes (documento, tipo_documento, nombres, apellidos, telefono, email) VALUES
+('9876543', 'CI', 'Ana', 'Fernández Vargas', '77700001', 'ana.fernandez@gmail.com'),
+('8765432', 'CI', 'Roberto', 'Gutiérrez Solís', '77700002', 'roberto.g@gmail.com'),
+('7654321', 'CI', 'Lucía', 'Morales Chávez', '77700003', 'lucia.morales@gmail.com'),
+('6543210', 'CI', 'Fernando', 'Ríos Condori', '77700004', 'fernando.rios@gmail.com'),
+('5432109', 'CI', 'Gabriela', 'Torrez Mamani', '77700005', 'gaby.torrez@gmail.com');
+
+-- Movimientos iniciales de inventario (compras)
+INSERT INTO movimientos_inventario (tipo_movimiento_id, lote_id, cantidad, usuario_id, observaciones) VALUES
+(1, 1, 200, 1, 'Compra inicial - Paracetamol'),
+(1, 2, 150, 1, 'Compra inicial - Ibuprofeno'),
+(1, 3, 100, 1, 'Compra inicial - Amoxicilina'),
+(1, 4, 300, 1, 'Compra inicial - Vitamina C'),
+(1, 5, 120, 1, 'Compra inicial - Loratadina'),
+(1, 6, 180, 1, 'Compra inicial - Omeprazol'),
+(1, 7, 80, 1, 'Compra inicial - Diclofenaco Gel'),
+(1, 8, 90, 1, 'Compra inicial - Azitromicina'),
+(1, 9, 200, 1, 'Compra inicial - Cetirizina'),
+(1, 10, 60, 1, 'Compra inicial - Complejo B');
+
+-- ============================================================
+-- FIN DEL SCRIPT
+-- ============================================================
+-- Para acceder al sistema usa:
+--   Usuario: admin
+--   Contraseña: admin123
+-- ============================================================

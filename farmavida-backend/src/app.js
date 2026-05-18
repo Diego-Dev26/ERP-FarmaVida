@@ -11,6 +11,13 @@ const ventaRoutes = require('./routes/ventaRoutes');
 const productosRoutes = require('./routes/productosRoutes');
 const sucursalesRoutes = require('./routes/sucursalesRoutes');
 const metodosPagoRoutes = require('./routes/metodosPagoRoutes');
+const clienteRoutes = require('./routes/clienteRoutes');
+const proveedorRoutes = require('./routes/proveedorRoutes');
+const compraRoutes = require('./routes/compraRoutes');
+const ubicacionRoutes = require('./routes/ubicacionRoutes');
+const transferenciaRoutes = require('./routes/transferenciaRoutes');
+const empleadoRoutes = require('./routes/empleadoRoutes');
+const reporteRoutes = require('./routes/reporteRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +39,13 @@ app.use('/api/sales', ventaRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/sucursales', sucursalesRoutes);
 app.use('/api/metodos-pago', metodosPagoRoutes);
+app.use('/api/clientes', clienteRoutes);
+app.use('/api/proveedores', proveedorRoutes);
+app.use('/api/compras', compraRoutes);
+app.use('/api/ubicaciones', ubicacionRoutes);
+app.use('/api/transferencias', transferenciaRoutes);
+app.use('/api/empleados', empleadoRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -53,7 +67,8 @@ app.listen(PORT, () => {
   console.log(`   POST /api/sales - Registrar venta`);
   console.log(`   GET  /api/productos - Listar productos`);
   console.log(`   GET  /api/sucursales - Listar sucursales`);
-  console.log(`   GET  /api/metodos-pago - Listar métodos de pago\n`);
+  console.log(`   GET  /api/metodos-pago - Listar métodos de pago`);
+  console.log(`   GET  /api/clientes - Listar clientes\n`);
 });
 
 module.exports = app;
